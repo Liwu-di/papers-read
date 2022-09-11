@@ -1,5 +1,5 @@
 ## 师兄推荐的：Selective Cross-City Transfer Learning for Traffic Prediction via Source City Region Re-Weighting  
-1. 推荐理由：==跨城市交通==可能会是一个特殊点，一个比较少的竞争方向
+1. 推荐理由：<u>跨城市交通<u>可能会是一个特殊点，一个比较少的竞争方向
 2. 摘要部分：  
 	* 目的是为了解决数据不足的问题（少部分城市有大量数据，其他没有）  
 	* 方法是迁移学习，但是迁移学习有缺点：
