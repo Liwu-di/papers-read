@@ -17,7 +17,7 @@
 ## 背景与问题陈述  
 1. 交通预测  
 令 Gt = (V, E) 表示时间步 t 的交通网络，其中 V 是一组 n 个节点（例如，区域、路段、道路传感器等），E 是一组边。 Gt 的构建可以分为两种类型，（1）基于先验，基于地理接近度和相似性等指标预先定义 Gt [10]，以及（2）基于学习，自动学习 Gt端到端方式[2]。请注意，Gt 可以是静态的或随时间变化的，具体取决于预测模型。我们将 Xt = (x1,t, x2,t, ···, xn,t) 表示为与 Gt 相关的时空特征，其中 xi,t ∈ R c 表示 c 维时变交通状况（例如，交通量、交通速度）和节点 vi ∈ V 在 t 处的上下文特征（例如，天气、周围 POI）。时空交通预测问题旨在预测所有 vi ∈ V 在接下来的 τ 个时间步长上的交通状态， ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/63.png)   
-![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/64.png)  表示交通状态包含前T个时间步的输入特征和交通网络，fθ(·)是由θ参数化的时空交通预测模型，并且![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/65.png)  是从时间步长 t+1 到 t+τ 估计的 V 感兴趣的交通状况。我们表示![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/65.png)作为 ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/66.png) 的基本事实。  
+![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/64.png)  表示交通状态包含前T个时间步的输入特征和交通网络，fθ(·)是由θ参数化的时空交通预测模型，并且![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/65.png)  是从时间步长 t+1 到 t+τ 估计的 V 感兴趣的交通状况。我们表示![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/84.png)作为 ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/66.png) 的基本事实。  
 
 2. 对抗攻击  
 给定机器学习模型，对抗性攻击旨在通过生成最佳对抗性示例来误导模型得出有偏见的预测![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/67.png)  其中 x 0 是在 Lp 范数下具有最大界限 ε 的对抗性示例，以保证扰动对人类来说是不可察觉的，y 是干净示例 x 的基本事实。  
@@ -26,7 +26,7 @@
 3. 针对时空流量预测的对抗性攻击
 这项工作旨在将对抗性攻击应用于时空交通预测模型。我们首先将对抗性交通状态定义如下，  
 ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/68.png)  
-其中 St ∈ {0, 1} n×n 是一个对角矩阵，第 i 个对角元素表示节点 i 是否是受害者节点，X0 t 是被称为对抗性时空特征的扰动时空特征。我们通过受害节点预算 η 和扰动预算 ε 来限制对抗性交通状态。请注意，根据对抗性攻击的定义，我们将 Gt 的拓扑结构保持不变，因为我们将邻接关系视为模型参数的一部分，可以以端到端的方式自动学习。  
+其中 St ∈ {0, 1} n×n 是一个对角矩阵，第 i 个对角元素表示节点 i 是否是受害者节点，X0 t 是被称为对抗性时空特征的扰动时空特征。我们通过受害节点预算 η （受害者节点个数）和扰动预算 ε 来限制对抗性交通状态。请注意，根据对抗性攻击的定义，我们将 Gt 的拓扑结构保持不变，因为我们将邻接关系视为模型参数的一部分，可以以端到端的方式自动学习。  
 攻击目标。攻击者旨在制造对抗性交通状态来欺骗时空预测模型，从而得出有偏见的预测。形式上，给定一个时空预测模型 fθ(·)，针对时空交通预测的对抗性攻击定义为  
 ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/69.png)   
 其中 Ttest 和 Ttrain 分别表示所有测试和训练样本的时间步长集。 L(·) 是测量预测交通状态和地面实况之间距离的损失函数，θ ∗ 是在训练阶段学习的最佳参数。由于在时空交通预测设置下的真相（即未来的交通状态）在运行时不可用，因此实际的对抗性时空攻击主要落入灰色盒子攻击环境中。然而，研究白盒攻击仍然有助于帮助我们了解对抗性攻击的工作原理，并有助于提高时空流量预测模型的鲁棒性（例如，应用对抗性训练）。我们将在 3.2 节讨论如何将我们提出的对抗性攻击框架扩展到白盒和黑盒设置。  
@@ -37,7 +37,19 @@
    将攻击性时空预测与传统分类任务区分开来的一个独特特征是在测试阶段无法访问基本事实。因此，我们首先构建未来交通状态的代理标签来指导攻击方向，![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/70.png) 其中 gφ(·) 是一个广义函数（例如，tanh(·)、sin (·)、fθ(·)），δt+1:t+τ 是从概率分布 π(δt+1:t +τ ) 增加攻击方向的多样性。在我们的实现中，我们得出![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/71.png)  基于预训练的预测模型参数 θ ∗ 和 δt+1:t+τ ∼ U(-ε/10, ε/10)。在现实世界的生产中[5]，预测模型通常以在线方式更新（例如，每小时）。因此，我们根据之前的输入数据估计缺失的最新交通状态，![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/72.png)  其中 gφ(·) 是由 φ 参数化的估计函数。为简单起见，我们直接从预训练的交通预测模型 fθ ∗ (·) 中获得 φ。使用代理交通状态标签![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/73.png) ，我们推导出每个节点的时间相关节点显着性 (TDNS) 为![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/74.png) where ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/75.png) 是损失函数，σ是激活函数。直观地说，Mt 揭示了具有相同扰动程度的节点损失影响。请注意，根据时间步长 t，Mt 可能会有所不同。类似的想法也被用于识别图像分类的静态像素显着性[15]。更详细地说，公式 6 中的损失函数![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/75.png) 通过基于迭代梯度的对抗方法 [8] 进行更新， ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/76.png)  
    where ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/77.png) 是第 i 次迭代的对抗性交通状态，α 是步长，并且是第 i 次迭代的对抗性交通状态，α 是步长，并且where ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/78.png) 是用最大扰动界限 ε 裁剪时空特征的映射操作。注意![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/79.png) 对于每批数据![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/80.png) 与时间相关的节点显着性梯度由下式推导![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/81.png) 其中 γ 是批量大小。我们使用 RELU 激活函数来计算每个时间步的非负显着性分数，![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/82.png) 最后，我们根据 Mt 得到受害节点 St 的集合，![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/83.png)其中 s(i,i),t 表示 St 的第 i 个对角线元素，Top(·) 是一个 0-1 指示函数，如果 vi 是时间步 t 的前 k 个显着节点，则返回。
 2. 具有对抗性流量状态的攻击  
+   基于时间相关的受害者集，我们对时空流量预测模型进行对抗性攻击。具体来说，我们首先基于梯度下降方法生成扰动对抗性交通特征。以广泛使用的投影梯度下降（PGD）[8]为例，我们构建时空投影梯度下降（STPGD）如下
+   ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/85.png)  
+   where ![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/86.png) 是迭代梯度下降中第 i - 1 次迭代的对抗性交通状态，α 是步长，并且![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/87.png) 是将对抗性特征绑定到 ε 球中的操作。注意![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/88.png) 我们不像普通 PGD 那样扰动所有节点，而是只在 St 中选定的受害节点上注入扰动。类似地，我们可以通过扩展其他基于梯度的方法（如 MIM [9]）来生成扰动的对抗性流量特征。在测试阶段，我们可以注入对抗性流量状态![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/89.png) 应用对抗性攻击，其中![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/90.png) 并且![formula graph](https://github.com/Liwu-di/papers-read/blob/main/pic/91.png) （注意这个属于的符号，因为公式说的是一个向量，但是应用的时候是向量组）  
+    灰盒设置下的对抗性时空攻击框架的细节在算法 1 中。整体对抗性时空攻击可以很容易地扩展到白盒和黑盒设置，下面将详细介绍。白盒攻击。由于攻击者可以在白盒设置下完全访问数据和标签，我们直接使用真实的地面真实交通状态来指导对抗性交通状态的生成。详细算法在附录 A.1 中介绍。黑盒攻击。最严格的黑盒设置假定目标模型和标签的可访问性有限。因此，我们首先采用代理模型，该模型可以从训练数据中学习或通过查询交通预测服务 [16, 17]。然后我们基于代理模型生成对抗性流量状态来攻击目标流量预测模型。详情请参阅附录 A.2。我们以所提出的对抗性攻击策略的理论上限分析结束本节。特别是，我们展示了针对时空交通预测模型的攻击性能与所选受害节点的数量、对抗性扰动的预算以及交通网络拓扑有关。  
+    ![Theorem graph](https://github.com/Liwu-di/papers-read/blob/main/pic/92.png)  
+
+   ![Algorithm graph](https://github.com/Liwu-di/papers-read/blob/main/pic/93.png)
+
    
+
+
+
+
 
 
 
